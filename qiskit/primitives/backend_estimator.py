@@ -270,16 +270,17 @@ class BackendEstimator(BaseEstimator[PrimitiveJob[EstimatorResult]]):
         circuits: tuple[QuantumCircuit, ...],
         observables: tuple[BaseOperator, ...],
         parameter_values: tuple[tuple[float, ...], ...],
+        anti_hermitian: bool = False,
         **run_options,
     ):
         circuit_indices = []
         for circuit in circuits:
-            index = self._circuit_ids.get(_circuit_key(circuit))
+            index = self._circuit_ids.get(_circuit_key(circuit, anti_hermitian=anti_hermitian))
             if index is not None:
                 circuit_indices.append(index)
             else:
                 circuit_indices.append(len(self._circuits))
-                self._circuit_ids[_circuit_key(circuit)] = len(self._circuits)
+                self._circuit_ids[_circuit_key(circuit, anti_hermitian=anti_hermitian)] = len(self._circuits)
                 self._circuits.append(circuit)
                 self._parameters.append(circuit.parameters)
         observable_indices = []
