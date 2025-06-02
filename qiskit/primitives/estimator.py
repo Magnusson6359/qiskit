@@ -128,11 +128,12 @@ class Estimator(BaseEstimator[PrimitiveJob[EstimatorResult]]):
         circuits: tuple[QuantumCircuit, ...],
         observables: tuple[BaseOperator, ...],
         parameter_values: tuple[tuple[float, ...], ...],
+        anti_hermitian: bool = False,
         **run_options,
     ):
         circuit_indices = []
         for circuit in circuits:
-            key = _circuit_key(circuit)
+            key = _circuit_key(circuit, anti_hermitian=anti_hermitian) # Inelegant solution to avoid hash clash with anti_hermitian
             index = self._circuit_ids.get(key)
             if index is not None:
                 circuit_indices.append(index)
